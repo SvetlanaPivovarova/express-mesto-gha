@@ -13,8 +13,10 @@ const userSchema = new mongoose.Schema({
     minlength: 2,
     maxlength: 30,
   },
-  avatar: String,
-  required: true,
+  avatar: {
+    type: String,
+    required: true,
+  }
 });
 
 // создаём модель и экспортируем её
