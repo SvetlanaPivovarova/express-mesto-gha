@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 const userRouter = require('./routes/users');
 
@@ -9,15 +10,11 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-//GET /users — возвращает всех пользователей
-//GET /users/:userId - возвращает пользователя по _id
-//POST /users — создаёт пользователя
+app.use(express.json());
+app.use(bodyParser.json()); // для собирания JSON-формата
+app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
 
-//app.use('/users', getUsers);
-//app.use('/users/:userId', getUser);
-//app.use('/users', createUser);
-
-//app.use(express.static(path.join(__dirname, "public")));
+app.use('/users', userRouter);
 
 app.get('/', (req, res) => {
   res.send(
@@ -29,16 +26,16 @@ app.get('/', (req, res) => {
   );
 });
 
-app.use('/', userRouter);
-
 app.get("*", (req, res) => {
-  res.status(404).send({ message: "Not found"});
+  res.status(404).send( { message: "Not found"} );
 })
 
 // подключаемся к серверу mongo
+//mongoose.connect('mongodb://localhost:27017/mydb', { useNewUrlParser: true });
 mongoose.connect('mongodb://localhost:27017/mydb');
+//mongoose.connect('mongodb://db:27017')
+
 
 app.listen(PORT, () => {
-  // Если всё работает, консоль покажет, какой порт приложение слушает
   console.log(`App listening on port ${PORT}`);
 })

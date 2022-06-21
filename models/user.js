@@ -21,3 +21,9 @@ const userSchema = new mongoose.Schema({
 
 // создаём модель и экспортируем её
 module.exports = mongoose.model('user', userSchema);
+
+//{
+//  "name": тестовый пользователь,
+//  "about": информация о себе,
+//  "avatar": https://lh3.googleusercontent.com/ogw/ADea4I7C2J0Pl8rorSWA4GfxnBU97UXNNonSGvbgjSpdWg=s32-c-mo,
+//  }

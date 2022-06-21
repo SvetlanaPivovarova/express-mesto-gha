@@ -1,23 +1,20 @@
 const router = require("express").Router();
-const path = require("path");
 
-const pathToFile = path.join(__dirname, "..", "data", "users.json")
-const readFile = require("../utils/read-file");
 
-router.get('/users', (req, res) => {
-  readFile(pathToFile).then((data) => console.log(data));
-});
+//router.get('/users', );
 
-//const {
-//  userController,
-//  usersController,
-//  createUser,
-//} = require("../controllers/users");
+//router.get('/users/:id', );
 
-//router.get("/users", usersController);
+const {
+  userController,
+  usersController,
+  createUser
+} = require("../controllers/users");
 
-//router.get("/users/:id", userController);
+router.get("/", usersController);
 
-//router.post("/users", createUser);
+router.get("/:id", userController);
+
+router.post("/", createUser);
 
 module.exports = router;
