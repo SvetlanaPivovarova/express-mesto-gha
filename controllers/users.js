@@ -13,7 +13,7 @@ const userController = (req, res) => {
   User.findById(id)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
       }
       return res.send({ data: user });
     })
@@ -47,9 +47,9 @@ const updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(req.params._id, { name, about })
     .then((user) => {
       if (!user) {
-        return res.status(400).send({ message: 'Пользователь с указанным _id не найден' });
+        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
       }
-      return res.status(200).send({ data: user });
+      return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -67,8 +67,7 @@ const updateUserAvatar = (req, res) => {
       if (!user) {
         return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
       }
-      return res.status(201).send({ data: user });
-      //.then((user) => res.status(201).send({ data: user }))
+      return res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
