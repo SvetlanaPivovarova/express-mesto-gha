@@ -9,7 +9,8 @@ const {
   userController,
   usersController,
   createUser,
-  updateUserProfile
+  updateUserProfile,
+  updateUserAvatar
 } = require("../controllers/users");
 
 router.get("/", usersController);
@@ -17,6 +18,10 @@ router.get("/", usersController);
 router.get("/:id", userController);
 
 router.post("/", createUser);
+
+router.patch('/me', updateUserProfile);
+
+router.patch("/me/avatar", updateUserAvatar);
 
 module.exports = router;
 

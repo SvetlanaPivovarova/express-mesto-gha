@@ -47,6 +47,18 @@ const updateUserProfile = (req, res) => {
     .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
 }
 
+const updateUserAvatar = (req, res) => {
+  const { avatar } = req.body;
+  User.findByIdAndUpdate(req.params._id, { avatar })
+    .then(user => {
+      if (!user) {
+        return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+      }
+      return res.send({ data: user });
+    })
+    .catch(err=> res.status(500).send({ message: 'Произошла ошибка' }));
+}
+
 //const createUser = (req, res) => {
   //const { name, about, avatar } = req.body;
   //console.log({ name, about, avatar });
@@ -64,4 +76,6 @@ module.exports = {
   userController,
   usersController,
   createUser,
-  updateUserProfile };
+  updateUserProfile,
+  updateUserAvatar
+};
