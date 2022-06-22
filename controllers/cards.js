@@ -1,11 +1,13 @@
 const Card = require('../models/card');
 
+//возвращает все карточки
 const getCards = (req, res) => {
   Card.find()
     .then((data) => res.send(data))
     .catch(() => res.status(404).send({message: "No file"}));
 };
 
+//создаёт карточку
 const createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
@@ -21,6 +23,7 @@ const createCard = (req, res) => {
     ));
 };
 
+//удаляет карточку по идентификатору
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
@@ -32,4 +35,27 @@ const deleteCard = (req, res) => {
     .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
-module.exports = { getCards, createCard, deleteCard };
+//поставить лайк карточке
+const putLikeToCard = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+    { new: true },
+  )
+    .then(card => {
+      if (!card) {
+        return res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
+      }
+      return res.send({ data: card });
+    })
+    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+};
+
+//убрать лайк с карточки
+
+module.exports = {
+  getCards,
+  createCard,
+  deleteCard,
+  putLikeToCard
+};
