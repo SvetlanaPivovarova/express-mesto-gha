@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
@@ -20,29 +19,19 @@ app.use('/cards', cardRouter);
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '62b287c446796a14239943d2'
+    _id: '62b287c446796a14239943d2',
   };
 
   next();
 });
 
-app.get('/', (req, res) => {
-  res.send(
-    `<html>
-        <body>
-            <p>Ответ на сигнал из далёкого космоса</p>
-        </body>
-        </html>`
-  );
-});
-
-app.get("*", (req, res) => {
-  res.status(404).send( { message: "Not found"} );
+app.get('*', (req, res) => {
+  res.status(404).send({ message: 'Not found' });
 });
 
 app.listen(PORT, async () => {
   // подключаемся к серверу mongo
-  mongoose.connection.on('connected', function () {
+  mongoose.connection.on('connected', () => {
     console.log('mongodb connected!!!');
   });
   await mongoose.connect(

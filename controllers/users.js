@@ -1,81 +1,86 @@
-//const path = require("path");
-
 const User = require('../models/user');
-//const readFile = require("../utils/read-file");
-//const pathToFile = path.join(__dirname, '..', 'data', 'users.json');
 
+// возвращает всех пользователей
 const usersController = (req, res) => {
   User.find()
-    .then((data) => res.send(data))
-    .catch(() => res.status(404).send({message: "No file"}));
+    .then((data) => {
+      if (!data) {
+        return res.status(404).send({ message: 'Пользователи не найдены' });
+      }
+      res.send(data);
+    })
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
+// возвращает пользователя по _id
 const userController = (req, res) => {
   const { id } = req.params;
   User.findOne({ id })
     .then((data) => {
       if (!data) {
-        throw new Error();
+        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
       }
-      res.send(data)
+      res.send(data);
     })
-    .catch(() => res.status(404).send({ message: "No user"}));
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
+// создаёт пользователя
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
-  console.log({ name, about, avatar });
 
   User.create({ name, about, avatar })
     // вернём записанные в базу данные
-    .then(user => res.send({ data: user }))
+    .then((user) => res.send({ data: user }))
     // данные не записались, вернём ошибку
-    .catch(err => res.status(500).send(
-      { message: 'Произошла ошибка' }
-    ));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: `Переданы некорректные данные при создании пользователя ${err.message}` });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
+    });
 };
 
+// обновляет профиль
 const updateUserProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.params._id, { name, about })
-    .then(user => {
+    .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
       }
       return res.send({ data: user });
     })
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
-}
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: `Переданы некорректные данные при создании пользователя ${err.message}` });
+      }
+      res.status(500).send({ message: 'Произошла ошибка' });
+    });
+};
 
+// обновляет аватар
 const updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.params._id, { avatar })
-    .then(user => {
+    .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
       }
       return res.send({ data: user });
     })
-    .catch(err=> res.status(500).send({ message: 'Произошла ошибка' }));
-}
-
-//const createUser = (req, res) => {
-  //const { name, about, avatar } = req.body;
-  //console.log({ name, about, avatar });
-  //User.create({ name, about, avatar })
-  //  .then((user) => res.send(user))
-  //  .catch((err) => {
-  //    if (err.name === 'ValidationError') {
-   //     return res.status(400).send({ message: `Данные некорректны ${err.message}` });
-   //   }
-   //   return res.status(401).send({ message: 'Сервер не может обработать запрос' });
-   // });
-//};
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: `Переданы некорректные данные при создании пользователя ${err.message}` });
+      }
+      res.status(500).send({ message: 'Произошла ошибка' });
+    });
+};
 
 module.exports = {
   userController,
   usersController,
   createUser,
   updateUserProfile,
-  updateUserAvatar
+  updateUserAvatar,
 };
