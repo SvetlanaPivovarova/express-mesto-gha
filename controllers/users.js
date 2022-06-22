@@ -25,13 +25,14 @@ const userController = (req, res) => {
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   console.log({ name, about, avatar });
-  console.log(req.params);
 
   User.create({ name, about, avatar })
     // вернём записанные в базу данные
     .then(user => res.send({ data: user }))
     // данные не записались, вернём ошибку
-    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(err => res.status(500).send(
+      { message: 'Произошла ошибка' }
+    ));
 };
 
 //const createUser = (req, res) => {

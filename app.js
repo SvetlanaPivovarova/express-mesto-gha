@@ -28,14 +28,15 @@ app.get('/', (req, res) => {
 
 app.get("*", (req, res) => {
   res.status(404).send( { message: "Not found"} );
-})
+});
 
-// подключаемся к серверу mongo
-//mongoose.connect('mongodb://localhost:27017/mydb', { useNewUrlParser: true });
-mongoose.connect('mongodb://localhost:27017/mydb');
-//mongoose.connect('mongodb://db:27017')
-
-
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  // подключаемся к серверу mongo
+  mongoose.connection.on('connected', function () {
+    console.log('mongodb connected!!!');
+  });
+  await mongoose.connect(
+    'mongodb://localhost:27017/mestodb',
+  );
   console.log(`App listening on port ${PORT}`);
-})
+});
