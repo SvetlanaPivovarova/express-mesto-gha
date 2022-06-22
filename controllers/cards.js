@@ -5,9 +5,9 @@ const getCards = (req, res) => {
   Card.find()
     .then((data) => {
       if (!data) {
-        return res.status(404).send({ message: 'Данные не найдены' });
+        return res.status(404).send({ message: `Данные не найдены ${err.message}` });
       }
-      return res.send(data);
+      return res.status(200).send(data);
     })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
@@ -19,7 +19,7 @@ const createCard = (req, res) => {
 
   Card.create({ name, link, owner })
     // вернём записанные в базу данные
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(201).send({ data: card }))
     // данные не записались, вернём ошибку
     .catch((err) => {
       if (err.name === 'ValidationError') {
