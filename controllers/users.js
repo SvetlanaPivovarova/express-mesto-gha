@@ -13,13 +13,13 @@ const userController = (req, res) => {
   User.findById(id)
     .then((user) => {
       if (!user) {
-        return res.status(400).send({ message: 'Запрашиваемый пользователь не найден' });
+        return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
       }
       return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(404).send({ message: `Данные некорректны ${err.message}. Проверьте id пользователя` });
+        return res.status(400).send({ message: `Данные некорректны ${err.message}. Проверьте id пользователя` });
       }
       return res.status(500).send({ message: 'Сервер не может обработать запрос' });
     });
