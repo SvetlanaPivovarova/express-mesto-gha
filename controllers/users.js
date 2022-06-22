@@ -47,9 +47,9 @@ const updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(req.params._id, { name, about })
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
+        return res.status(400).send({ message: 'Пользователь с указанным _id не найден' });
       }
-      return res.send({ data: user });
+      return res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
