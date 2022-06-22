@@ -7,7 +7,7 @@ const getCards = (req, res) => {
       if (!data) {
         return res.status(404).send({ message: 'Данные не найдены' });
       }
-      res.send(data);
+      return res.send(data);
     })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
@@ -16,8 +16,6 @@ const getCards = (req, res) => {
 const createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
-
-  console.log({ name, link, owner });
 
   Card.create({ name, link, owner })
     // вернём записанные в базу данные

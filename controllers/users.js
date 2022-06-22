@@ -3,12 +3,7 @@ const User = require('../models/user');
 // возвращает всех пользователей
 const usersController = (req, res) => {
   User.find()
-    .then((data) => {
-      if (!data) {
-        return res.status(404).send({ message: 'Пользователи не найдены' });
-      }
-      res.send(data);
-    })
+    .then((users) => res.send({ data: users }))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
@@ -20,7 +15,7 @@ const userController = (req, res) => {
       if (!data) {
         return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
       }
-      res.send(data);
+      return res.send(data);
     })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
@@ -55,7 +50,7 @@ const updateUserProfile = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: `Переданы некорректные данные при создании пользователя ${err.message}` });
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -73,7 +68,7 @@ const updateUserAvatar = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: `Переданы некорректные данные при создании пользователя ${err.message}` });
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
