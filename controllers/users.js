@@ -4,10 +4,10 @@ const User = require('../models/user');
 //const readFile = require("../utils/read-file");
 //const pathToFile = path.join(__dirname, '..', 'data', 'users.json');
 
-const usersController = (_req, res) => {
+const usersController = (req, res) => {
   User.find()
     .then((data) => res.send(data))
-    .catch((_) => res.status(404).send({message: "No file"}));
+    .catch(() => res.status(404).send({message: "No file"}));
 };
 
 const userController = (req, res) => {

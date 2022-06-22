@@ -23,7 +23,10 @@ const userSchema = new mongoose.Schema({
 module.exports = mongoose.model('user', userSchema);
 
 //{
-//  "name": тестовый пользователь,
-//  "about": информация о себе,
-//  "avatar": https://lh3.googleusercontent.com/ogw/ADea4I7C2J0Pl8rorSWA4GfxnBU97UXNNonSGvbgjSpdWg=s32-c-mo,
+//  "name": "тестовый пользователь",
+//  "about": "информация о себе",
+//  "avatar": "https://lh3.googleusercontent.com/ogw/ADea4I7C2J0Pl8rorSWA4GfxnBU97UXNNonSGvbgjSpdWg=s32-c-mo",
 //  }
+//_id
+// :
+// 62b287c446796a14239943d2
