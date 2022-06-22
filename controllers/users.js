@@ -35,6 +35,18 @@ const createUser = (req, res) => {
     ));
 };
 
+const updateUserProfile = (req, res) => {
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(req.params._id, { name, about })
+    .then(user => {
+      if (!user) {
+        return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+      }
+      return res.send({ data: user });
+    })
+    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+}
+
 //const createUser = (req, res) => {
   //const { name, about, avatar } = req.body;
   //console.log({ name, about, avatar });
@@ -48,4 +60,8 @@ const createUser = (req, res) => {
    // });
 //};
 
-module.exports = { userController, usersController, createUser };
+module.exports = {
+  userController,
+  usersController,
+  createUser,
+  updateUserProfile };

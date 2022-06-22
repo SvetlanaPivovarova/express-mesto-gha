@@ -20,7 +20,7 @@ app.use('/cards', cardRouter);
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '62b287c446796a14239943d2' // вставьте сюда _id созданного в предыдущем пункте пользователя
+    _id: '62b287c446796a14239943d2'
   };
 
   next();
