@@ -5,7 +5,7 @@ const getCards = (req, res) => {
   Card.find()
     .then((data) => {
       if (!data) {
-        return res.status(404).send({ message: `Данные не найдены ${err.message}` });
+        return res.status(404).send({ message: 'Данные не найдены' });
       }
       return res.status(200).send(data);
     })
@@ -14,18 +14,18 @@ const getCards = (req, res) => {
 
 // создаёт карточку
 const createCard = (req, res) => {
+  console.log(req.user._id); // _id станет доступен
   const { name, link } = req.body;
-  const owner = req.user._id;
+  //const owner = req.user._id;
+  const { _id } = req.user;
 
-  Card.create({ name, link, owner })
-    // вернём записанные в базу данные
-    .then((card) => res.status(201).send({ data: card }))
-    // данные не записались, вернём ошибку
+  Card.create({ name, link, owner: _id })
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: `Переданы некорректные данные при создании карточки ${err.message}` });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(500).send({ message: 'Сервер не может обработать запрос' });
     });
 };
 
