@@ -30,10 +30,6 @@ app.use('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемая страница не найдена' });
 });
 
-//app.get('*', (req, res) => {
-//  res.status(404).send({ message: 'Not found' });
-//});
-
 app.listen(PORT, async () => {
   // подключаемся к серверу mongo
   mongoose.connection.on('connected', () => {
