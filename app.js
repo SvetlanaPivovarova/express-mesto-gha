@@ -26,9 +26,13 @@ app.use('/users', userRouter);
 
 app.use('/cards', cardRouter);
 
-app.get('*', (req, res) => {
-  res.status(404).send({ message: 'Not found' });
+app.use('*', (req, res) => {
+  res.status(404).send({ message: 'Запрашиваемая страница не найдена' });
 });
+
+//app.get('*', (req, res) => {
+//  res.status(404).send({ message: 'Not found' });
+//});
 
 app.listen(PORT, async () => {
   // подключаемся к серверу mongo
