@@ -46,10 +46,10 @@ const updateUserProfile = (req, res) => {
   const { _id } = req.user;
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(_id, { name, about }, { new: true })
+  User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        return res.status(400).send({ message: 'Пользователь с указанным _id не найден' });
+        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
       }
       return res.send({ data: user });
     })

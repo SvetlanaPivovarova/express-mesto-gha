@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // для приёма ве�
 
 app.use((req, res, next) => {
   req.user = {
-    '_id': '62b34fac0f8d482209c86c57',
+    _id: '62b34fac0f8d482209c86c57',
   };
 
   next();
@@ -33,10 +33,10 @@ app.get('*', (req, res) => {
 app.listen(PORT, async () => {
   // подключаемся к серверу mongo
   mongoose.connection.on('connected', () => {
-     console.log('mongodb connected!!!');
+    console.log('mongodb connected!!!');
   });
   await mongoose.connect(
     'mongodb://localhost:27017/mestodb',
   );
-   console.log(`App listening on port ${PORT}`);
+  console.log(`App listening on port ${PORT}`);
 });
