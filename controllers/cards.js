@@ -50,11 +50,16 @@ const putLikeToCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(400).send({ message: 'Передан несуществующий _id карточки' });
+        return res.status(404).send({ message: 'Передан несуществующий _id карточки' });
       }
       return res.send({ data: card });
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: `Некорректные данные ${err.message}` });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
+    });
 };
 
 // убрать лайк с карточки
