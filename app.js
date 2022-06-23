@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
+const {ERROR_NOT_FOUND} = require('./utils/utils');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -26,7 +27,7 @@ app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
 app.use((req, res) => {
-  res.status(404).send({ message: 'Запрашиваемая страница не найдена' });
+  res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не найдена' });
 });
 
 app.listen(PORT, async () => {

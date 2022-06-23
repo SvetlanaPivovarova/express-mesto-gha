@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { ERROR_CODE, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../utils/utils');
+const { ERROR_BAD_REQUEST, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../utils/utils');
 
 // возвращает все карточки
 const getCards = (req, res) => {
@@ -17,7 +17,7 @@ const createCard = (req, res) => {
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: `Переданы некорректные данные при создании карточки ${err.message}` });
+        return res.status(ERROR_BAD_REQUEST).send({ message: `Переданы некорректные данные при создании карточки ${err.message}` });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });
@@ -34,7 +34,7 @@ const deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: `Некорректные данные ${err.message}` });
+        return res.status(ERROR_BAD_REQUEST).send({ message: `Некорректные данные ${err.message}` });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });
@@ -49,13 +49,13 @@ const putLikeToCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Передан несуществующий _id карточки' });
+        return res.status(ERROR_NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
       }
       return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: `Некорректные данные ${err.message}` });
+        return res.status(ERROR_BAD_REQUEST).send({ message: `Некорректные данные ${err.message}` });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });
@@ -76,7 +76,7 @@ const deleteLikeFromCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: `Некорректные данные ${err.message}` });
+        return res.status(ERROR_BAD_REQUEST).send({ message: `Некорректные данные ${err.message}` });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });

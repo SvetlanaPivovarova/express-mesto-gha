@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { ERROR_CODE, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../utils/utils');
+const { ERROR_BAD_REQUEST, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../utils/utils');
 
 // возвращает всех пользователей
 const getAllUsers = (req, res) => {
@@ -20,7 +20,7 @@ const getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: `Данные некорректны ${err.message}. Проверьте id пользователя` });
+        return res.status(ERROR_BAD_REQUEST).send({ message: `Данные некорректны ${err.message}. Проверьте id пользователя` });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Сервер не может обработать запрос' });
     });
@@ -36,7 +36,7 @@ const createUser = (req, res) => {
     // данные не записались, вернём ошибку
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: `Переданы некорректные данные при создании пользователя ${err.message}` });
+        return res.status(ERROR_BAD_REQUEST).send({ message: `Переданы некорректные данные при создании пользователя ${err.message}` });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });
@@ -56,7 +56,7 @@ const updateUserProfile = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: `Переданы некорректные данные при создании пользователя ${err.message}` });
+        return res.status(ERROR_BAD_REQUEST).send({ message: `Переданы некорректные данные при создании пользователя ${err.message}` });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });
@@ -76,7 +76,7 @@ const updateUserAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: `Переданы некорректные данные ${err.message}` });
+        return res.status(ERROR_BAD_REQUEST).send({ message: `Переданы некорректные данные ${err.message}` });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });
