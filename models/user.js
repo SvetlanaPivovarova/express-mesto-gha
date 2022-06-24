@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
-
-//validator.isEmail('foo@bar.com'); //=> true
 
 const userSchema = new mongoose.Schema({
   name: { // у пользователя есть имя — опишем требования к имени в схеме:

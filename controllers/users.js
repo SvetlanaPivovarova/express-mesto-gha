@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const validator = require('validator');
 
 const User = require('../models/user');
 const { ERROR_BAD_REQUEST, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../utils/utils');
@@ -27,22 +28,29 @@ const getUserById = (req, res) => {
       return res.status(ERROR_DEFAULT).send({ message: 'Сервер не может обработать запрос' });
     });
 };
-
+//validator.isEmail('foo@bar.com'); //=> true
 // создаёт пользователя
 const createUser = (req, res) => {
   const { name, about, avatar, email, password } = req.body;
+  //const salt = bcrypt.genSaltSync();
+  const saltRounds = 10;
 
-  bcrypt.hash(password, 10)
+  bcrypt.hash(password, saltRounds)
     .then((hash) => User.create({ name, about, avatar, email, password: hash })
       // вернём записанные в базу данные
-      .then((user) => res.status(201).send({ data: user })))
+      .then((user) => {
+        if (!validator.isEmail(email)) {
+          return res.status(ERROR_BAD_REQUEST).send({ message: 'Укажите e-mail' });
+        }
+        res.status(201).send({ data: user })
+      })
     // данные не записались, вернём ошибку
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_BAD_REQUEST).send({ message: `Переданы некорректные данные при создании пользователя ${err.message}` });
       }
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
-    });
+    }));
 };
 
 // обновляет профиль
