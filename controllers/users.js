@@ -1,8 +1,9 @@
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
-const { ERROR_BAD_REQUEST, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../utils/utils');
+const { ERROR_BAD_REQUEST, ERROR_AUTH, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../utils/utils');
 
 // возвращает всех пользователей
 const getAllUsers = (req, res) => {
@@ -28,7 +29,7 @@ const getUserById = (req, res) => {
       return res.status(ERROR_DEFAULT).send({ message: 'Сервер не может обработать запрос' });
     });
 };
-//validator.isEmail('foo@bar.com'); //=> true
+
 // создаёт пользователя
 const createUser = (req, res) => {
   const { name, about, avatar, email, password } = req.body;
@@ -52,6 +53,51 @@ const createUser = (req, res) => {
       return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     }));
 };
+
+// получает из запроса почту и пароль и проверяет их
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        if (!user) {
+          return Promise.reject(new Error('Неправильные почта или пароль'));
+        }
+      }
+
+      return bcrypt.compare(password, user.password);
+    })
+    .then((matched) => {
+      if (!matched) {
+        return Promise.reject(new Error('Неправильные почта или пароль'));
+      }
+
+      res.send({ message: 'Всё верно!' });
+    })
+    .then((user) => {
+      // создадим токен
+      const token = jwt.sign(
+        { _id: user._id },
+        'some-secret-key',
+        { expiresIn: '7d' },
+        function(err, token) {
+          res.cookie('jwt', token, {
+            // token - наш JWT токен, который мы отправляем
+            maxAge: 3600000 * 24 * 7,
+            httpOnly: true
+          })
+            .end(); // если у ответа нет тела, можно использовать метод end
+      });
+
+      // вернём токен
+      res.send({ token });
+
+    })
+    .catch((err) => {
+      res.status(ERROR_AUTH).send({ message: err.message });
+  });
+}
 
 // обновляет профиль
 const updateUserProfile = (req, res) => {
@@ -97,6 +143,7 @@ module.exports = {
   getUserById,
   getAllUsers,
   createUser,
+  login,
   updateUserProfile,
   updateUserAvatar,
 };
