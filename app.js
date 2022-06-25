@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
@@ -14,6 +15,11 @@ const app = express();
 
 app.use(bodyParser.json()); // для собирания JSON-формата
 app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
+app.use(cookieParser()); // подключаем парсер
+
+// app.get('/posts', (req, res) => {
+//  console.log(req.cookies.jwt); // достаём токен
+// });
 
 app.post('/signin', login);
 app.post('/signup', createUser);
