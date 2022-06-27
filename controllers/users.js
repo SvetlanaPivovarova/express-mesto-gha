@@ -35,22 +35,34 @@ const createUser = (req, res) => {
   //const salt = bcrypt.genSaltSync();
   const saltRounds = 10;
 
-  bcrypt.hash(password, saltRounds)
-    .then((hash) => User.create({ name, about, avatar, email, password: hash })
-      // вернём записанные в базу данные
-      .then((user) => {
-        // if (!validator.isEmail(email)) {
-          // return res.status(ERROR_BAD_REQUEST).send({ message: 'Укажите e-mail' });
-        // }
-        res.status(201).send({ data: user })
-      })
-    // данные не записались, вернём ошибку
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(ERROR_BAD_REQUEST).send({ message: `Переданы некорректные данные при создании пользователя ${err.message}` });
+  if(!password || !email) {
+    return res.status(ERROR_AUTH).send({ message: 'Укажите e-mail и пароль' });
+  }
+
+  User.findOne({email}).
+    then((user) => {
+      if(user) {
+        return res.status(ERROR_AUTH).send({message: 'Такой пользователь уже существует'});
       }
-      return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
-    }));
+      else {
+        bcrypt.hash(password, saltRounds)
+          .then((hash) => User.create({ name, about, avatar, email, password: hash })
+            // вернём записанные в базу данные
+            .then((user) => {
+              // if (!validator.isEmail(email)) {
+              // return res.status(ERROR_BAD_REQUEST).send({ message: 'Укажите e-mail' });
+              // }
+              res.status(201).send({ data: user })
+            })
+            // данные не записались, вернём ошибку
+            .catch((err) => {
+              if (err.name === 'ValidationError') {
+                return res.status(ERROR_BAD_REQUEST).send({ message: `Переданы некорректные данные при создании пользователя ${err.message}` });
+              }
+              return res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
+            }));
+      }
+  })
 };
 
 // получает из запроса почту и пароль и проверяет их
