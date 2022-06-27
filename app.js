@@ -7,6 +7,7 @@ const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const { ERROR_NOT_FOUND } = require('./utils/utils');
+const auth = require('./middlewares/auth');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -21,8 +22,12 @@ app.use(cookieParser()); // подключаем парсер
 //  console.log(req.cookies.jwt); // достаём токен
 // });
 
+// роуты, не требующие авторизации
 app.post('/signin', login);
 app.post('/signup', createUser);
+
+// авторизация
+app.use(auth);
 
 app.use((req, res, next) => {
   req.user = {
@@ -32,8 +37,8 @@ app.use((req, res, next) => {
   next();
 });
 
+// роуты, которым авторизация нужна
 app.use('/users', userRouter);
-
 app.use('/cards', cardRouter);
 
 app.use((req, res) => {

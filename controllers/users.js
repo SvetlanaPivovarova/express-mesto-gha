@@ -73,7 +73,6 @@ const login = (req, res) => {
             .end(); // если у ответа нет тела, можно использовать метод end
         });
       // вернём токен
-      //console.log({ "token1": token } );
       res.send({ token });
     })
     .catch((err) => {
