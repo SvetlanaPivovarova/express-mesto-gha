@@ -18,24 +18,20 @@ app.use(bodyParser.json()); // для собирания JSON-формата
 app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
 app.use(cookieParser()); // подключаем парсер
 
-// app.get('/posts', (req, res) => {
-//  console.log(req.cookies.jwt); // достаём токен
-// });
-
 // роуты, не требующие авторизации
-app.post('/signin', login);
 app.post('/signup', createUser);
+app.post('/signin', login);
 
 // авторизация
 app.use(auth);
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '62b34fac0f8d482209c86c57',
-  };
-
-  next();
-});
+//app.use((req, res, next) => {
+//  req.user = {
+//    _id: '62b34fac0f8d482209c86c57',
+//  };
+//
+//  next();
+//});
 
 // роуты, которым авторизация нужна
 app.use('/users', userRouter);

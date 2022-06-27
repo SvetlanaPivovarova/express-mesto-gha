@@ -65,6 +65,7 @@ const login = (req, res) => {
         { expiresIn: '7d' },
         function(err, token) {
           console.log({ "token": token } );
+          console.log({ "id": user._id } );
           res.cookie('jwt', token, {
             // token - наш JWT токен, который мы отправляем
             maxAge: 3600000 * 24 * 7,
