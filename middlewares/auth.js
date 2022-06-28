@@ -1,35 +1,30 @@
 const jwt = require('jsonwebtoken');
 const { ERROR_AUTH } = require('../utils/utils');
 
+const JWT_SECRET = 'SECRET_PROJECT';
+
 const auth = (req, res, next) => {
-  // достаём авторизационный заголовок
-  const { authorization } = req.headers;
-  console.log(authorization);
-  console.log({"jwt": req.cookies.jwt});
+  const cookies = req.cookies;
 
-  // убеждаемся, что он есть или начинается с Bearer
-  //if (!authorization || !authorization.startsWith('Bearer ')) {
-  //  return res
-  //    .status(ERROR_AUTH)
-  //    .send({ message: 'Необходима авторизация' });
-  //}
+  if (!cookies) {
+    next(res.status(ERROR_AUTH).send({error: 'Авторизация не успешна'}));
+  } else {
+    const token = cookies.jwt;
+    let payload;
 
-  // извлечём токен
-  //const token = authorization.replace('Bearer ', '');
-  let payload;
-
-  try {
     // попытаемся верифицировать токен
-    payload = jwt.verify(req.cookies.jwt, 'some-secret-key');
-  } catch (err) {
-    // отправим ошибку, если не получилось
-    return res
-      .status(ERROR_AUTH)
-      .send({ message: 'Необходима авторизация' });
+    try {
+      payload = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      next(res.status(ERROR_AUTH).send({error: 'jwt token is not valid'}));
+    }
+    req.user = payload;
+    next();
   }
 
-  req.user = payload;
-  next();
+
+  // req.user = payload;
+
 }
 
 module.exports = auth;

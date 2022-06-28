@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { ERROR_BAD_REQUEST, ERROR_AUTH, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../utils/utils');
 
+const JWT_SECRET = 'SECRET_PROJECT';
+
 // возвращает всех пользователей
 const getAllUsers = (req, res) => {
   User.find()
@@ -36,7 +38,7 @@ const createUser = (req, res) => {
   const saltRounds = 10;
 
   if(!password || !email) {
-    return res.status(ERROR_AUTH).send({ message: 'Укажите e-mail и пароль' });
+    return res.status(ERROR_BAD_REQUEST).send({ message: 'Укажите e-mail и пароль' });
   }
 
   User.findOne({email}).
@@ -49,9 +51,6 @@ const createUser = (req, res) => {
           .then((hash) => User.create({ name, about, avatar, email, password: hash })
             // вернём записанные в базу данные
             .then((user) => {
-              // if (!validator.isEmail(email)) {
-              // return res.status(ERROR_BAD_REQUEST).send({ message: 'Укажите e-mail' });
-              // }
               res.status(201).send({ data: user })
             })
             // данные не записались, вернём ошибку
@@ -69,24 +68,28 @@ const createUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
 
+  if(!email || !password) {
+    return res.status(ERROR_BAD_REQUEST).send({message: 'Укажите e-mail и пароль'});
+  }
+
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        'some-secret-key',
+        JWT_SECRET,
         { expiresIn: '7d' },
         function(err, token) {
           console.log({ "token": token } );
-          console.log({ "id": user._id } );
-          res.cookie('jwt', token, {
+          // вернём токен
+          return res.cookie('jwt', token, {
             // token - наш JWT токен, который мы отправляем
             maxAge: 3600000 * 24 * 7,
             httpOnly: true
           })
-            .end(); // если у ответа нет тела, можно использовать метод end
+            .status(200).send({ _id: user._id });
         });
-      // вернём токен
-      res.send({ token });
+       // .end(); // если у ответа нет тела, можно использовать метод end
+      //res.send({ token });
     })
     .catch((err) => {
       res.status(ERROR_AUTH).send({ message: err.message });
