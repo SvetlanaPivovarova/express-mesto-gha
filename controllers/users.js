@@ -34,7 +34,6 @@ const getUserById = (req, res) => {
 // создаёт пользователя
 const createUser = (req, res) => {
   const { name, about, avatar, email, password } = req.body;
-  //const salt = bcrypt.genSaltSync();
   const saltRounds = 10;
 
   if(!password || !email) {
