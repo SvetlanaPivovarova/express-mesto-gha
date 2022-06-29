@@ -23,7 +23,7 @@ app.post('/signup', createUser);
 app.post('/signin', login);
 
 // авторизация
-//app.use(auth);
+app.use(auth);
 
 //app.use((req, res, next) => {
 //  req.user = {
@@ -34,7 +34,7 @@ app.post('/signin', login);
 //});
 
 // роуты, которым авторизация нужна
-app.use('/users', auth, userRouter);
+app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
 app.use((req, res) => {

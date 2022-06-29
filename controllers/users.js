@@ -79,14 +79,14 @@ const login = (req, res) => {
         JWT_SECRET,
         { expiresIn: '7d' },
         function(err, token) {
-          console.log({ "token": token } );
+          // console.log({ "token": token } );
           // вернём токен
           return res.cookie('jwt', token, {
             // token - наш JWT токен, который мы отправляем
             maxAge: 3600000 * 24 * 7,
             httpOnly: true
           })
-            .status(200).send({ _id: user._id });
+            .status(200).send({token, _id: user._id });
         });
        // .end(); // если у ответа нет тела, можно использовать метод end
       //res.send({ token });
