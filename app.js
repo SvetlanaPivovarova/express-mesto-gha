@@ -25,13 +25,13 @@ app.post('/signin', login);
 // авторизация
 app.use(auth);
 
-//app.use((req, res, next) => {
+// app.use((req, res, next) => {
 //  req.user = {
 //    _id: '62b34fac0f8d482209c86c57',
 //  };
 //
 //  next();
-//});
+// });
 
 // роуты, которым авторизация нужна
 app.use('/users', userRouter);

@@ -7,17 +7,17 @@ const userSchema = new mongoose.Schema({
     type: String, // имя — это строка
     minlength: 2, // минимальная длина имени — 2 символа
     maxlength: 30, // а максимальная — 30 символов
-    default: 'Жак-Ив Кусто'
+    default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    default: 'Исследователь'
+    default: 'Исследователь',
   },
   avatar: {
     type: String,
-    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png'
+    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
   email: {
     type: String,
@@ -28,17 +28,17 @@ const userSchema = new mongoose.Schema({
         return validator.isEmail(v); // если почта записана не в верном формате, вернётся false
       },
       message: 'Укажите e-mail', // когда validator вернёт false, будет использовано это сообщение
-    }
+    },
   },
   password: {
     type: String,
     required: true,
     minlength: 8,
     select: false,
-  }
+  },
 });
 
-userSchema.statics.findUserByCredentials = function (email, password) {
+userSchema.statics.findUserByCredentials = function findCredentials(email, password) {
   return this.findOne({ email })
     .select('+password')
     .then((user) => {
