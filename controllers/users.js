@@ -96,6 +96,22 @@ const login = (req, res) => {
     });
 };
 
+// получает информацию о пользователе
+const getUserInfo = (req, res) => {
+  const { _id } = req.user;
+
+  User.findById(_id)
+    .then((user) => {
+      res.status(200).send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(ERROR_BAD_REQUEST).send({ message: `Данные некорректны ${err.message}` });
+      }
+      return res.status(ERROR_DEFAULT).send({ message: 'Сервер не может обработать запрос' });
+    });
+}
+
 // обновляет профиль
 const updateUserProfile = (req, res) => {
   const { _id } = req.user;
@@ -141,6 +157,7 @@ module.exports = {
   getAllUsers,
   createUser,
   login,
+  getUserInfo,
   updateUserProfile,
   updateUserAvatar,
 };
