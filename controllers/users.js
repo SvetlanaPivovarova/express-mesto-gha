@@ -46,23 +46,23 @@ const createUser = (req, res, next) => {
         throw new AuthDataError('Такой пользователь уже существует');
       }
 
-      return bcrypt.hash(password, saltRounds)
-        .then((hash) => User.create({
-          name, about, avatar, email, password: hash,
-        })
-          // вернём записанные в базу данные
-          .then((userData) => {
-            res.status(201).send({
-              name: userData.name,
-              about: userData.about,
-              avatar: userData.avatar,
-              email: userData.email,
-              _id: userData._id,
-            })})
-          // данные не записались, вернём ошибку
-          .catch(next))
-        .catch(next);
-    });
+      return bcrypt.hash(password, saltRounds);
+    })
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
+  // вернём записанные в базу данные
+    .then((userData) => {
+      res.status(201).send({
+        name: userData.name,
+        about: userData.about,
+        avatar: userData.avatar,
+        email: userData.email,
+        _id: userData._id,
+      });
+    })
+  // данные не записались, вернём ошибку
+    .catch(next);
 };
 
 // получает из запроса почту и пароль и проверяет их
