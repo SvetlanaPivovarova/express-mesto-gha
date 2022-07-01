@@ -5,6 +5,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const AuthDataError = require('../errors/auth-data-error');
+const AuthError = require('../errors/auth-error');
 // const ValidationError = require('../errors/validation-error');
 
 const JWT_SECRET = 'SECRET_PROJECT';
@@ -98,7 +99,7 @@ const getUserInfo = (req, res, next) => {
     .then((user) => {
       res.status(200).send({ data: user });
     })
-    .catch(next);
+    .catch(() => next(new AuthError('Укажите верные e-mail и пароль')));
 };
 
 // обновляет профиль
