@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
-    select: false // необходимо добавить поле select
+    select: false, // необходимо добавить поле select
   },
 });
 

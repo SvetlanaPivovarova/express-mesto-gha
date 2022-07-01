@@ -20,7 +20,7 @@ const auth = (req, res, next) => {
     } catch (err) {
       // next(err);
       // throw new AuthError('jwt token is not valid');
-       next(res.status(ERROR_AUTH).send({ error: 'jwt token is not valid' }));
+      next(res.status(ERROR_AUTH).send({ error: 'jwt token is not valid' }));
     }
     req.user = payload;
     next();
