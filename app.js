@@ -16,7 +16,7 @@ const app = express();
 
 app.use(bodyParser.json()); // для собирания JSON-формата
 app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
-app.use(cookieParser()); // подключаем парсер
+app.use(cookieParser()); // подключаем парсер cookie
 
 // роуты, не требующие авторизации
 app.post('/signup', createUser);
@@ -25,20 +25,38 @@ app.post('/signin', login);
 // авторизация
 app.use(auth);
 
-// app.use((req, res, next) => {
-//  req.user = {
-//    _id: '62b34fac0f8d482209c86c57',
-//  };
-//
-//  next();
-// });
-
 // роуты, которым авторизация нужна
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
 app.use((req, res) => {
   res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не найдена' });
+});
+
+// централизованная обработка ошибок
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message, name } = err; // если у ошибки нет статуса, выставляем 500
+
+  if (err.code === 11000) {
+    // Обработка ошибки
+  }
+
+  if (name === 'CastError') {
+    res.status(statusCode).send({ message: `Данные некорректны ${message}`});
+  }
+
+  if (name === 'ValidationError') {
+    res.status(statusCode).send({ message: `Переданы некорректные данные при создании пользователя ${message}`});
+  }
+
+  res.status(statusCode)
+    .send({
+      // проверяем статус и выставляем сообщение в зависимости от него
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message
+    });
+  next();
 });
 
 app.listen(PORT, async () => {
