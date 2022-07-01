@@ -34,13 +34,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
-    select: false, // необходимо добавить поле select
+    select: false,
   },
 });
 
 userSchema.statics.findUserByCredentials = function findCredentials(email, password) {
-  return this.findOne({ email })
-    .select('+password')
+  return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         return Promise.reject(new Error('Неправильные почта или пароль'));
