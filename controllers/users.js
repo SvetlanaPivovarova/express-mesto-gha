@@ -6,7 +6,7 @@ const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const AuthDataError = require('../errors/auth-data-error');
 const AuthError = require('../errors/auth-error');
-// const ValidationError = require('../errors/validation-error');
+const ValidationError = require('../errors/validation-error');
 
 const JWT_SECRET = 'SECRET_PROJECT';
 
@@ -63,6 +63,12 @@ const createUser = (req, res, next) => {
       });
     })
   // данные не записались, вернём ошибку
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return next(new ValidationError('Данные некорректны'));
+      }
+      return next(err);
+    })
     .catch(next);
 };
 
