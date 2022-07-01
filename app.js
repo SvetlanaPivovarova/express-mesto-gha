@@ -29,11 +29,16 @@ app.post(
       avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[a-zA-Z\0-9]+\.[\w\d\-._~:?#[\]@!$&'()*+,;=]{2,}#?/),
       email: Joi.string().required().email(),
       password: Joi.string().required().min(8),
-    }),
+    }).unknown(true),
   }),
   createUser,
 );
-app.post('/signin', login);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }).unknown(true),
+}), login);
 
 // авторизация
 app.use(auth);
