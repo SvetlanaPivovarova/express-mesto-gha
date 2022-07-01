@@ -51,7 +51,14 @@ const createUser = (req, res, next) => {
           name, about, avatar, email, password: hash,
         })
           // вернём записанные в базу данные
-          .then((userData) => res.status(201).send({ data: userData }))
+          .then((userData) => {
+            res.status(201).send({
+              name: userData.name,
+              about: userData.about,
+              avatar: userData.avatar,
+              email: userData.email,
+              _id: userData._id,
+            })})
           // данные не записались, вернём ошибку
           .catch(next))
         .catch(next);
