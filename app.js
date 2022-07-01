@@ -37,16 +37,16 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   const { statusCode = 500, message, name } = err; // если у ошибки нет статуса, выставляем 500
 
-  if (err.code === 11000) {
-    // Обработка ошибки
+  if (name === 'UserAlreadyExists') {
+    res.status(statusCode).send({ message });
   }
 
   if (name === 'CastError') {
-    res.status(statusCode).send({ message: `Данные некорректны ${message}`});
+    res.status(statusCode).send({ message: `Данные некорректны ${message}` });
   }
 
   if (name === 'ValidationError') {
-    res.status(statusCode).send({ message: `Переданы некорректные данные при создании пользователя ${message}`});
+    res.status(statusCode).send({ message: `Переданы некорректные данные при создании пользователя ${message}` });
   }
 
   res.status(statusCode)
@@ -54,7 +54,7 @@ app.use((err, req, res, next) => {
       // проверяем статус и выставляем сообщение в зависимости от него
       message: statusCode === 500
         ? 'На сервере произошла ошибка'
-        : message
+        : message,
     });
   next();
 });

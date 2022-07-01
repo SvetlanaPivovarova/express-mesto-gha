@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
-const AuthError = require('../errors/auth-error');
+const AuthDataError = require('../errors/auth-data-error');
 // const ValidationError = require('../errors/validation-error');
 
 const JWT_SECRET = 'SECRET_PROJECT';
@@ -43,7 +43,7 @@ const createUser = (req, res, next) => {
   return User.findOne({ email })
     .then((user) => {
       if (user) {
-        throw new AuthError('Такой пользователь уже существует');
+        throw new AuthDataError('Такой пользователь уже существует');
       }
 
       return bcrypt.hash(password, saltRounds)
@@ -53,8 +53,7 @@ const createUser = (req, res, next) => {
         // вернём записанные в базу данные
           .then(() => res.status(201).send({ data: user }))
         // данные не записались, вернём ошибку
-          .catch(next)
-        )
+          .catch(next))
         .catch(next);
     });
 };
