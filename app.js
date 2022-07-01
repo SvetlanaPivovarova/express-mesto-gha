@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const { celebrate, Joi, errors } = require('celebrate');
 
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
@@ -19,7 +20,19 @@ app.use(bodyParser.urlencoded({ extended: true })); // для приёма ве�
 app.use(cookieParser()); // подключаем парсер cookie
 
 // роуты, не требующие авторизации
-app.post('/signup', createUser);
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string(),
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  createUser,
+);
 app.post('/signin', login);
 
 // авторизация
@@ -32,6 +45,9 @@ app.use('/cards', cardRouter);
 app.use((req, res) => {
   res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не найдена' });
 });
+
+// обработчики ошибок
+app.use(errors()); // обработчик ошибок celebrate
 
 // централизованная обработка ошибок
 app.use((err, req, res, next) => {
