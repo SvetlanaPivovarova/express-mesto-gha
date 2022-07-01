@@ -56,7 +56,19 @@ app.use(errors()); // обработчик ошибок celebrate
 
 // централизованная обработка ошибок
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err; // если у ошибки нет статуса, выставляем 500
+  const { statusCode = 500, message, name } = err; // если у ошибки нет статуса, выставляем 500
+
+  if (name === 'UserAlreadyExists') {
+    res.status(statusCode).send({ message });
+  }
+
+  if (name === 'CastError') {
+    res.status(statusCode).send({ message: `Данные некорректны ${message}` });
+  }
+
+  if (name === 'ValidationError') {
+    res.status(statusCode).send({ message: `Переданы некорректные данные при создании пользователя ${message}` });
+  }
 
   res.status(statusCode)
     .send({
