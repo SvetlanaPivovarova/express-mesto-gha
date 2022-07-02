@@ -27,7 +27,7 @@ const createCard = (req, res, next) => {
 
 // удаляет карточку по идентификатору
 const deleteCard = (req, res, next) => {
-  const { id } = req.params;
+  const id = req.params.cardId;
   Card.findById(id)
     .orFail(() => new NotFoundError('Нет карточки по заданному id'))
     .then((card) => {
