@@ -7,8 +7,9 @@ const { celebrate, Joi, errors } = require('celebrate');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
-const { ERROR_NOT_FOUND } = require('./utils/utils');
 const auth = require('./middlewares/auth');
+const NotFoundError = require('./errors/not-found-error');
+const errorsHandler = require('./errors/error-handler');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -28,16 +29,16 @@ app.post(
       about: Joi.string().min(2).max(30),
       avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[a-zA-Z\0-9]+\.[\w\d\-._~:?#[\]@!$&'()*+,;=]{2,}#?/),
       email: Joi.string().required().email(),
-      password: Joi.string().required().min(8),
-    }).unknown(true),
+      password: Joi.string().required(),
+    }),
   }),
   createUser,
 );
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }).unknown(true),
+    password: Joi.string().required(),
+  }),
 }), login);
 
 // авторизация
@@ -47,38 +48,13 @@ app.use(auth);
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
-app.use((req, res) => {
-  res.status(ERROR_NOT_FOUND).send({ message: 'Запрашиваемая страница не найдена' });
-});
+app.use((req, res, next) => next(new NotFoundError('Запрашиваемая страница не найдена')));
 
 // обработчики ошибок
 app.use(errors()); // обработчик ошибок celebrate
 
 // централизованная обработка ошибок
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message, name } = err; // если у ошибки нет статуса, выставляем 500
-
-  if (name === 'UserAlreadyExists') {
-    res.status(statusCode).send({ message });
-  }
-
-  if (name === 'CastError') {
-    res.status(statusCode).send({ message: `Данные некорректны ${message}` });
-  }
-
-  if (name === 'ValidationError') {
-    res.status(statusCode).send({ message: `Переданы некорректные данные при создании пользователя ${message}` });
-  }
-
-  res.status(statusCode)
-    .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-  next();
-});
+app.use(errorsHandler);
 
 app.listen(PORT, async () => {
   // подключаемся к серверу mongo
