@@ -59,10 +59,9 @@ const createUser = (req, res, next) => {
     })
   // данные не записались, вернём ошибку
     .catch((err) => {
-      if(err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректные данные при создании пользователя'));
-      }
-      else {
+      } else {
         next(err);
       }
     });
@@ -75,18 +74,18 @@ const login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
-        {_id: user._id},
+        { _id: user._id },
         JWT_SECRET,
-        {expiresIn: '7d'},
+        { expiresIn: '7d' },
       );
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
       })
-        .send({token, _id: user._id});
+        .send({ token, _id: user._id });
     })
     .catch(() => {
-        next(new AuthError('Укажите верные e-mail и пароль'));
+      next(new AuthError('Укажите верные e-mail и пароль'));
     });
 };
 
@@ -114,10 +113,9 @@ const updateUserProfile = (req, res, next) => {
       return res.send({ data: user });
     })
     .catch((err) => {
-      if(err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректные данные при обновлении информации о пользователе'));
-      }
-      else {
+      } else {
         next(err);
       }
     });
@@ -136,10 +134,9 @@ const updateUserAvatar = (req, res, next) => {
       return res.status(200).send({ data: user });
     })
     .catch((err) => {
-      if(err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректные данные при обновлении аватара'));
-      }
-      else {
+      } else {
         next(err);
       }
     });

@@ -17,13 +17,12 @@ const createCard = (req, res, next) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
-    if(err.name === 'ValidationError') {
-      next(new BadRequestError('Некорректные данные при создании карточки'));
-    }
-    else {
-      next(err);
-    }
-  });
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при создании карточки'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // удаляет карточку по идентификатору
@@ -36,7 +35,7 @@ const deleteCard = (req, res, next) => {
         return next(new ForbiddenError('Нельзя удалить чужую карточку'));
       }
       return card.remove()
-        .then(() => res.send({message: 'Карточка удалена'}));
+        .then(() => res.send({ message: 'Карточка удалена' }));
     })
     .catch(next);
 };
