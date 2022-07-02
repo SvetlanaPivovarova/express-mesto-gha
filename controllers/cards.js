@@ -31,12 +31,14 @@ const deleteCard = (req, res, next) => {
   Card.findById(id)
     .orFail(() => new NotFoundError('Нет карточки по заданному id'))
     .then((card) => {
-      if (!card.owner.equals(req.user._id)) {
-        return next(new ForbiddenError('Нельзя удалить чужую карточку'));
+      if (card.owner.toString() !== req.user._id) {
+        throw new ForbiddenError('Нельзя удалить чужую карточку!');
       }
-      return Card.remove()
-        .then(() => res.status(200).send({ message: 'Карточка удалена' }));
+      else {
+        card.remove();
+      }
     })
+    .then(() => res.status(200).send({ message: 'Карточка удалена' }))
     .catch(next);
 };
 
