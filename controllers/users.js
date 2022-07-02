@@ -37,10 +37,6 @@ const createUser = (req, res, next) => {
   } = req.body;
   const saltRounds = 10;
 
-  if (!password || !email) {
-    throw new BadRequestError('Укажите e-mail и пароль');
-  }
-
   return User.findOne({ email })
     .then((user) => {
       if (user) {
@@ -64,35 +60,31 @@ const createUser = (req, res, next) => {
     })
   // данные не записались, вернём ошибку
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return next(new ValidationError('Данные некорректны'));
+      if(err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при создании пользователя'));
       }
-      return next(err);
-    })
-    .catch(next);
+      else {
+        next(err);
+      }
+    });
 };
 
 // получает из запроса почту и пароль и проверяет их
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email || !password) {
-    throw new BadRequestError('Укажите e-mail и пароль');
-  }
-
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
-        { _id: user._id },
+        {_id: user._id},
         JWT_SECRET,
-        { expiresIn: '7d' },
-        () => res.cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-        })
-          .status(200).send({ token, _id: user._id }),
+        {expiresIn: '7d'},
       );
-      return token;
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      })
+        .send({token, _id: user._id});
     })
     .catch(next);
 };
