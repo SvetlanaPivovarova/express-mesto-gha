@@ -6,7 +6,6 @@ const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const AuthDataError = require('../errors/auth-data-error');
 const AuthError = require('../errors/auth-error');
-const ValidationError = require('../errors/validation-error');
 
 const JWT_SECRET = 'SECRET_PROJECT';
 
@@ -86,7 +85,9 @@ const login = (req, res, next) => {
       })
         .send({token, _id: user._id});
     })
-    .catch(next);
+    .catch(() => {
+        next(new AuthError('Укажите верные e-mail и пароль'));
+    });
 };
 
 // получает информацию о пользователе
@@ -97,7 +98,7 @@ const getUserInfo = (req, res, next) => {
     .then((user) => {
       res.status(200).send({ data: user });
     })
-    .catch(() => next(new AuthError('Укажите верные e-mail и пароль')));
+    .catch(next);
 };
 
 // обновляет профиль
@@ -112,7 +113,14 @@ const updateUserProfile = (req, res, next) => {
       }
       return res.send({ data: user });
     })
-    .catch(next);
+    .catch((err) => {
+      if(err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при обновлении информации о пользователе'));
+      }
+      else {
+        next(err);
+      }
+    });
 };
 
 // обновляет аватар
@@ -127,7 +135,14 @@ const updateUserAvatar = (req, res, next) => {
       }
       return res.status(200).send({ data: user });
     })
-    .catch(next);
+    .catch((err) => {
+      if(err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при обновлении аватара'));
+      }
+      else {
+        next(err);
+      }
+    });
 };
 
 module.exports = {
