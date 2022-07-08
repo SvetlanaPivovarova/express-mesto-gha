@@ -8,6 +8,7 @@ const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const NotFoundError = require('./errors/not-found-error');
 const errorsHandler = require('./errors/error-handler');
 
@@ -19,6 +20,8 @@ const app = express();
 app.use(bodyParser.json()); // для собирания JSON-формата
 app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
 app.use(cookieParser()); // подключаем парсер cookie
+
+app.use(requestLogger); // подключаем логгер запросов
 
 // роуты, не требующие авторизации
 app.post(
@@ -49,6 +52,8 @@ app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
 app.use((req, res, next) => next(new NotFoundError('Запрашиваемая страница не найдена')));
+
+app.use(errorLogger); // подключаем логгер ошибок
 
 // обработчики ошибок
 app.use(errors()); // обработчик ошибок celebrate
