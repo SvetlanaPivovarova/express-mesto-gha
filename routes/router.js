@@ -6,6 +6,7 @@ const cardRouter = require('./cards');
 const auth = require('../middlewares/auth');
 const { createUser, login } = require('../controllers/users');
 const NotFoundError = require('../errors/not-found-error');
+const regex = require('../utils/constance');
 
 // роуты, не требующие авторизации
 router.post(
@@ -14,7 +15,7 @@ router.post(
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[a-zA-Z\0-9]+\.[\w\d\-._~:?#[\]@!$&'()*+,;=]{2,}#?/),
+      avatar: Joi.string().pattern(regex),
       email: Joi.string().required().email(),
       password: Joi.string().required(),
     }),
